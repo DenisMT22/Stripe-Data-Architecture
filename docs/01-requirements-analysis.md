@@ -260,16 +260,14 @@ event_stream
  Plan de sécurité détaillé
  Stratégie ML intégrée
 
----
-
 ## 7. Prochaines étapes
 
-1.  Validation des besoins 
-2.  Conception modèle OLTP
-3.  Conception modèle OLAP
-4.  Conception modèle NoSQL
-5.  Architecture pipeline
-6.  Implémentation Terraform
-7.  Documentation sécurité
-8.  Intégration ML
-9.  Présentation finale
+1. Validation des besoins 
+2. Conception modèle OLTP
+3. Conception modèle OLAP
+4. Conception modèle NoSQL
+5. Architecture pipeline
+6. Implémentation Terraform
+7. Documentation sécurité
+8. Intégration ML
+9. Présentation finale
