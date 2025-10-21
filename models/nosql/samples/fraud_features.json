@@ -1,0 +1,130 @@
+[
+  {
+    "feature_id": "feat_990eA844-i6df-85h8-e150-88AA99884445",
+    "payment_id": "pi_3O9P8qLkdIwHu0C91rXyZmQY",
+    "merchant_id": "acct_1MxY2kLkdIwHu0C9",
+    "customer_id": "cus_PQR123456789",
+    "computed_at": "2025-10-19T14:23:45.200Z",
+    "fraud_score": 0.23,
+    "risk_level": "low",
+    "features": {
+      "transaction_velocity_1h": 2,
+      "transaction_velocity_24h": 8,
+      "avg_transaction_amount_30d": 4250.50,
+      "transaction_amount_stddev_30d": 1234.75,
+      "card_country_mismatch": false,
+      "ip_country_mismatch": false,
+      "first_transaction_customer": false,
+      "merchant_dispute_rate_30d": 0.012,
+      "customer_dispute_history": 0,
+      "time_since_last_transaction_seconds": 7200,
+      "device_fingerprint_new": false,
+      "email_domain_age_days": 2345
+    },
+    "raw_features": {
+      "ip_address": "203.0.113.42",
+      "device_fingerprint": "fp_a1b2c3d4e5f6",
+      "billing_address_hash": "hash_xyz789",
+      "shipping_address_hash": "hash_xyz789",
+      "card_bin": "424242"
+    },
+    "model_version": "fraud_model_v2.3.1",
+    "ttl": 15552000
+  },
+  {
+    "feature_id": "feat_AA1eBB55-j7eg-96i9-f261-99BB00995556",
+    "payment_id": "pi_3O9PBCLkdIwHu0C92sYzBoTU",
+    "merchant_id": "acct_2NzX3mMleJxIv1D0",
+    "customer_id": "cus_STU987654321",
+    "computed_at": "2025-10-19T14:24:12.500Z",
+    "fraud_score": 0.87,
+    "risk_level": "high",
+    "features": {
+      "transaction_velocity_1h": 15,
+      "transaction_velocity_24h": 23,
+      "avg_transaction_amount_30d": 250.00,
+      "transaction_amount_stddev_30d": 89.50,
+      "card_country_mismatch": true,
+      "ip_country_mismatch": true,
+      "first_transaction_customer": true,
+      "merchant_dispute_rate_30d": 0.045,
+      "customer_dispute_history": 0,
+      "time_since_last_transaction_seconds": 180,
+      "device_fingerprint_new": true,
+      "email_domain_age_days": 3
+    },
+    "raw_features": {
+      "ip_address": "198.51.100.88",
+      "device_fingerprint": "fp_z9y8x7w6v5u4",
+      "billing_address_hash": "hash_abc123",
+      "shipping_address_hash": "hash_def456",
+      "card_bin": "123456"
+    },
+    "model_version": "fraud_model_v2.3.1",
+    "ttl": 15552000
+  },
+  {
+    "feature_id": "feat_BB2eCC66-k8fh-07j0-g372-00CC11006667",
+    "payment_id": "pi_3O9PDELkdIwHu0C93tZaCpUV",
+    "merchant_id": "acct_1MxY2kLkdIwHu0C9",
+    "customer_id": "cus_VWX246813579",
+    "computed_at": "2025-10-19T14:26:01.300Z",
+    "fraud_score": 0.54,
+    "risk_level": "medium",
+    "features": {
+      "transaction_velocity_1h": 5,
+      "transaction_velocity_24h": 12,
+      "avg_transaction_amount_30d": 8500.25,
+      "transaction_amount_stddev_30d": 3456.80,
+      "card_country_mismatch": false,
+      "ip_country_mismatch": true,
+      "first_transaction_customer": false,
+      "merchant_dispute_rate_30d": 0.018,
+      "customer_dispute_history": 1,
+      "time_since_last_transaction_seconds": 3600,
+      "device_fingerprint_new": false,
+      "email_domain_age_days": 890
+    },
+    "raw_features": {
+      "ip_address": "192.0.2.15",
+      "device_fingerprint": "fp_m5n4o3p2q1r0",
+      "billing_address_hash": "hash_ghi789",
+      "shipping_address_hash": "hash_jkl012",
+      "card_bin": "555555"
+    },
+    "model_version": "fraud_model_v2.3.1",
+    "ttl": 15552000
+  },
+  {
+    "feature_id": "feat_CC3eDD77-l9gi-18k1-h483-11DD22117778",
+    "payment_id": "pi_3O9PFGLkdIwHu0C94uAbDqVW",
+    "merchant_id": "acct_3OzY4nNmfKyJw2E1",
+    "customer_id": "cus_YZA135792468",
+    "computed_at": "2025-10-19T14:27:45.600Z",
+    "fraud_score": 0.12,
+    "risk_level": "low",
+    "features": {
+      "transaction_velocity_1h": 1,
+      "transaction_velocity_24h": 3,
+      "avg_transaction_amount_30d": 12500.00,
+      "transaction_amount_stddev_30d": 2345.60,
+      "card_country_mismatch": false,
+      "ip_country_mismatch": false,
+      "first_transaction_customer": false,
+      "merchant_dispute_rate_30d": 0.005,
+      "customer_dispute_history": 0,
+      "time_since_last_transaction_seconds": 86400,
+      "device_fingerprint_new": false,
+      "email_domain_age_days": 4567
+    },
+    "raw_features": {
+      "ip_address": "198.51.100.99",
+      "device_fingerprint": "fp_s1t2u3v4w5x6",
+      "billing_address_hash": "hash_mno345",
+      "shipping_address_hash": "hash_mno345",
+      "card_bin": "378282"
+    },
+    "model_version": "fraud_model_v2.3.1",
+    "ttl": 15552000
+  }
+]

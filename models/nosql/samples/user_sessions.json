@@ -1,0 +1,139 @@
+[
+  {
+    "session_id": "sess_660e9511-f3ac-52e5-b827-557766551112",
+    "user_id": "usr_acct_1MxY2kLkdIwHu0C9",
+    "session_start": "2025-10-19T09:15:23.456Z",
+    "session_end": "2025-10-19T10:42:18.789Z",
+    "last_activity": "2025-10-19T10:42:18.789Z",
+    "duration_seconds": 5215,
+    "device_type": "desktop",
+    "browser": "Chrome 129.0.6668.89",
+    "os": "Windows 11",
+    "country": "FR",
+    "events": [
+      {
+        "timestamp": "2025-10-19T09:15:23.456Z",
+        "event_type": "login",
+        "page": "/login"
+      },
+      {
+        "timestamp": "2025-10-19T09:16:45.123Z",
+        "event_type": "page_view",
+        "page": "/dashboard"
+      },
+      {
+        "timestamp": "2025-10-19T09:23:12.567Z",
+        "event_type": "page_view",
+        "page": "/payments"
+      },
+      {
+        "timestamp": "2025-10-19T09:45:33.890Z",
+        "event_type": "export_data",
+        "page": "/payments",
+        "details": {"format": "csv", "date_range": "last_30_days"}
+      },
+      {
+        "timestamp": "2025-10-19T10:12:05.234Z",
+        "event_type": "page_view",
+        "page": "/customers"
+      },
+      {
+        "timestamp": "2025-10-19T10:42:18.789Z",
+        "event_type": "logout",
+        "page": "/dashboard"
+      }
+    ],
+    "page_views": [
+      {"page": "/dashboard", "count": 15, "total_time_seconds": 1234},
+      {"page": "/payments", "count": 8, "total_time_seconds": 2345},
+      {"page": "/customers", "count": 4, "total_time_seconds": 987},
+      {"page": "/settings", "count": 2, "total_time_seconds": 456}
+    ],
+    "actions_count": 6,
+    "ttl": 2592000
+  },
+  {
+    "session_id": "sess_770e9622-g4bd-63f6-c938-668877662223",
+    "user_id": "usr_acct_2NzX3mMleJxIv1D0",
+    "session_start": "2025-10-19T11:30:45.678Z",
+    "last_activity": "2025-10-19T11:52:33.901Z",
+    "duration_seconds": 1308,
+    "device_type": "mobile",
+    "browser": "Safari 17.1",
+    "os": "iOS 17.1.1",
+    "country": "US",
+    "events": [
+      {
+        "timestamp": "2025-10-19T11:30:45.678Z",
+        "event_type": "login",
+        "page": "/login"
+      },
+      {
+        "timestamp": "2025-10-19T11:31:23.456Z",
+        "event_type": "page_view",
+        "page": "/dashboard"
+      },
+      {
+        "timestamp": "2025-10-19T11:38:56.789Z",
+        "event_type": "page_view",
+        "page": "/payments"
+      },
+      {
+        "timestamp": "2025-10-19T11:52:33.901Z",
+        "event_type": "session_timeout",
+        "page": "/payments"
+      }
+    ],
+    "page_views": [
+      {"page": "/dashboard", "count": 3, "total_time_seconds": 234},
+      {"page": "/payments", "count": 5, "total_time_seconds": 789}
+    ],
+    "actions_count": 4,
+    "ttl": 2592000
+  },
+  {
+    "session_id": "sess_880e9733-h5ce-74g7-d049-779988773334",
+    "user_id": "usr_acct_1MxY2kLkdIwHu0C9",
+    "session_start": "2025-10-19T14:05:12.345Z",
+    "last_activity": "2025-10-19T14:28:45.678Z",
+    "duration_seconds": 1413,
+    "device_type": "tablet",
+    "browser": "Firefox 119.0",
+    "os": "Android 14",
+    "country": "FR",
+    "events": [
+      {
+        "timestamp": "2025-10-19T14:05:12.345Z",
+        "event_type": "login",
+        "page": "/login"
+      },
+      {
+        "timestamp": "2025-10-19T14:06:34.567Z",
+        "event_type": "page_view",
+        "page": "/dashboard"
+      },
+      {
+        "timestamp": "2025-10-19T14:15:23.890Z",
+        "event_type": "page_view",
+        "page": "/disputes"
+      },
+      {
+        "timestamp": "2025-10-19T14:22:11.234Z",
+        "event_type": "respond_dispute",
+        "page": "/disputes",
+        "details": {"dispute_id": "dp_3O9PXYLkdIwHu0C91tZaBnST"}
+      },
+      {
+        "timestamp": "2025-10-19T14:28:45.678Z",
+        "event_type": "logout",
+        "page": "/dashboard"
+      }
+    ],
+    "page_views": [
+      {"page": "/dashboard", "count": 4, "total_time_seconds": 456},
+      {"page": "/disputes", "count": 6, "total_time_seconds": 789}
+    ],
+    "actions_count": 5,
+    "ttl": 2592000
+  }
+]

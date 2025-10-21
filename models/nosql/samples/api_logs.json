@@ -1,0 +1,114 @@
+[
+  {
+    "log_id": "550e8400-e29b-41d4-a716-446655440001",
+    "merchant_id": "acct_1MxY2kLkdIwHu0C9",
+    "timestamp": "2025-10-19T14:23:45.123Z",
+    "endpoint": "/v1/charges",
+    "method": "POST",
+    "status_code": 200,
+    "latency_ms": 87,
+    "request_body": {
+      "amount": 5000,
+      "currency": "eur",
+      "source": "tok_visa",
+      "description": "Charge for order #12345"
+    },
+    "response_body": {
+      "id": "ch_3O9P8qLkdIwHu0C91rXyZmQY",
+      "object": "charge",
+      "amount": 5000,
+      "currency": "eur",
+      "status": "succeeded"
+    },
+    "user_agent": "Stripe/v1 PythonBindings/5.5.0",
+    "ip_address": "203.0.113.42",
+    "ttl": 7776000
+  },
+  {
+    "log_id": "550e8400-e29b-41d4-a716-446655440002",
+    "merchant_id": "acct_1MxY2kLkdIwHu0C9",
+    "timestamp": "2025-10-19T14:24:12.456Z",
+    "endpoint": "/v1/payment_intents",
+    "method": "POST",
+    "status_code": 402,
+    "latency_ms": 143,
+    "request_body": {
+      "amount": 15000,
+      "currency": "usd",
+      "payment_method": "pm_card_visa"
+    },
+    "response_body": {
+      "error": {
+        "type": "card_error",
+        "code": "card_declined",
+        "message": "Your card was declined."
+      }
+    },
+    "user_agent": "Stripe/v1 NodeBindings/12.18.0",
+    "ip_address": "198.51.100.88",
+    "error_message": "Card declined by issuer",
+    "ttl": 7776000
+  },
+  {
+    "log_id": "550e8400-e29b-41d4-a716-446655440003",
+    "merchant_id": "acct_2NzX3mMleJxIv1D0",
+    "timestamp": "2025-10-19T14:25:33.789Z",
+    "endpoint": "/v1/customers",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 34,
+    "request_body": null,
+    "response_body": {
+      "id": "cus_PQR123456789",
+      "object": "customer",
+      "email": "customer@example.com",
+      "created": 1698234567
+    },
+    "user_agent": "Stripe/v1 RubyBindings/9.4.0",
+    "ip_address": "192.0.2.15",
+    "ttl": 7776000
+  },
+  {
+    "log_id": "550e8400-e29b-41d4-a716-446655440004",
+    "merchant_id": "acct_1MxY2kLkdIwHu0C9",
+    "timestamp": "2025-10-19T14:26:01.234Z",
+    "endpoint": "/v1/refunds",
+    "method": "POST",
+    "status_code": 200,
+    "latency_ms": 112,
+    "request_body": {
+      "charge": "ch_3O9P8qLkdIwHu0C91rXyZmQY",
+      "amount": 2500,
+      "reason": "requested_by_customer"
+    },
+    "response_body": {
+      "id": "re_3O9PABLkdIwHu0C91sYzAnRZ",
+      "object": "refund",
+      "amount": 2500,
+      "status": "succeeded"
+    },
+    "user_agent": "Stripe/v1 JavaBindings/20.134.0",
+    "ip_address": "203.0.113.42",
+    "ttl": 7776000
+  },
+  {
+    "log_id": "550e8400-e29b-41d4-a716-446655440005",
+    "merchant_id": "acct_3OzY4nNmfKyJw2E1",
+    "timestamp": "2025-10-19T14:27:45.567Z",
+    "endpoint": "/v1/balance",
+    "method": "GET",
+    "status_code": 500,
+    "latency_ms": 5234,
+    "request_body": null,
+    "response_body": {
+      "error": {
+        "type": "api_error",
+        "message": "An error occurred while processing your request."
+      }
+    },
+    "user_agent": "Stripe/v1 PHPBindings/10.3.0",
+    "ip_address": "198.51.100.99",
+    "error_message": "Database timeout - query exceeded 5000ms threshold",
+    "ttl": 7776000
+  }
+]

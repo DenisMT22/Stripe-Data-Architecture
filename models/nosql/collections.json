@@ -1,0 +1,289 @@
+{
+  "collections": [
+    {
+      "id": "api_logs",
+      "partitionKey": "/merchant_id",
+      "defaultTtl": 7776000,
+      "indexingPolicy": {
+        "indexingMode": "consistent",
+        "automatic": true,
+        "includedPaths": [
+          {
+            "path": "/*"
+          }
+        ],
+        "excludedPaths": [
+          {
+            "path": "/request_body/*"
+          },
+          {
+            "path": "/response_body/*"
+          },
+          {
+            "path": "/_etag/?"
+          }
+        ],
+        "compositeIndexes": [
+          [
+            {
+              "path": "/merchant_id",
+              "order": "ascending"
+            },
+            {
+              "path": "/timestamp",
+              "order": "descending"
+            }
+          ],
+          [
+            {
+              "path": "/endpoint",
+              "order": "ascending"
+            },
+            {
+              "path": "/status_code",
+              "order": "ascending"
+            }
+          ]
+        ]
+      },
+      "throughput": {
+        "mode": "autoscale",
+        "maxThroughput": 50000
+      },
+      "description": "Stores all API request/response logs for audit, debugging, and analytics",
+      "schema": {
+        "log_id": "string (UUID)",
+        "merchant_id": "string (partition key)",
+        "timestamp": "datetime (ISO 8601)",
+        "endpoint": "string (e.g., /v1/charges)",
+        "method": "string (GET, POST, etc.)",
+        "status_code": "integer",
+        "latency_ms": "integer",
+        "request_body": "object (excluded from indexing)",
+        "response_body": "object (excluded from indexing)",
+        "user_agent": "string",
+        "ip_address": "string",
+        "error_message": "string (optional)",
+        "ttl": "integer (90 days = 7776000 seconds)"
+      }
+    },
+    {
+      "id": "user_sessions",
+      "partitionKey": "/user_id",
+      "defaultTtl": 2592000,
+      "indexingPolicy": {
+        "indexingMode": "consistent",
+        "automatic": true,
+        "includedPaths": [
+          {
+            "path": "/*"
+          }
+        ],
+        "excludedPaths": [
+          {
+            "path": "/events/*"
+          },
+          {
+            "path": "/page_views/*"
+          },
+          {
+            "path": "/_etag/?"
+          }
+        ],
+        "compositeIndexes": [
+          [
+            {
+              "path": "/user_id",
+              "order": "ascending"
+            },
+            {
+              "path": "/session_start",
+              "order": "descending"
+            }
+          ]
+        ]
+      },
+      "throughput": {
+        "mode": "autoscale",
+        "maxThroughput": 10000
+      },
+      "description": "Tracks user dashboard sessions for analytics and behavior analysis",
+      "schema": {
+        "session_id": "string (UUID)",
+        "user_id": "string (partition key)",
+        "session_start": "datetime (ISO 8601)",
+        "session_end": "datetime (ISO 8601, optional)",
+        "last_activity": "datetime (ISO 8601)",
+        "duration_seconds": "integer",
+        "device_type": "string (desktop, mobile, tablet)",
+        "browser": "string",
+        "os": "string",
+        "country": "string (ISO 3166-1 alpha-2)",
+        "events": "array of objects (excluded from indexing)",
+        "page_views": "array of objects (excluded from indexing)",
+        "actions_count": "integer",
+        "ttl": "integer (30 days = 2592000 seconds)"
+      }
+    },
+    {
+      "id": "fraud_features",
+      "partitionKey": "/payment_id",
+      "defaultTtl": 15552000,
+      "indexingPolicy": {
+        "indexingMode": "consistent",
+        "automatic": true,
+        "includedPaths": [
+          {
+            "path": "/*"
+          }
+        ],
+        "excludedPaths": [
+          {
+            "path": "/raw_features/*"
+          },
+          {
+            "path": "/_etag/?"
+          }
+        ],
+        "compositeIndexes": [
+          [
+            {
+              "path": "/merchant_id",
+              "order": "ascending"
+            },
+            {
+              "path": "/fraud_score",
+              "order": "descending"
+            }
+          ],
+          [
+            {
+              "path": "/computed_at",
+              "order": "descending"
+            },
+            {
+              "path": "/fraud_score",
+              "order": "descending"
+            }
+          ]
+        ]
+      },
+      "throughput": {
+        "mode": "autoscale",
+        "maxThroughput": 30000
+      },
+      "description": "Stores computed ML features for fraud detection models",
+      "schema": {
+        "feature_id": "string (UUID)",
+        "payment_id": "string (partition key)",
+        "merchant_id": "string",
+        "customer_id": "string",
+        "computed_at": "datetime (ISO 8601)",
+        "fraud_score": "float (0.0 - 1.0)",
+        "risk_level": "string (low, medium, high)",
+        "features": {
+          "transaction_velocity_1h": "integer",
+          "transaction_velocity_24h": "integer",
+          "avg_transaction_amount_30d": "float",
+          "transaction_amount_stddev_30d": "float",
+          "card_country_mismatch": "boolean",
+          "ip_country_mismatch": "boolean",
+          "first_transaction_customer": "boolean",
+          "merchant_dispute_rate_30d": "float",
+          "customer_dispute_history": "integer",
+          "time_since_last_transaction_seconds": "integer",
+          "device_fingerprint_new": "boolean",
+          "email_domain_age_days": "integer"
+        },
+        "raw_features": "object (excluded from indexing, for model retraining)",
+        "model_version": "string",
+        "ttl": "integer (180 days = 15552000 seconds)"
+      }
+    },
+    {
+      "id": "webhook_events",
+      "partitionKey": "/merchant_id",
+      "defaultTtl": 5184000,
+      "indexingPolicy": {
+        "indexingMode": "consistent",
+        "automatic": true,
+        "includedPaths": [
+          {
+            "path": "/*"
+          }
+        ],
+        "excludedPaths": [
+          {
+            "path": "/payload/*"
+          },
+          {
+            "path": "/_etag/?"
+          }
+        ],
+        "compositeIndexes": [
+          [
+            {
+              "path": "/merchant_id",
+              "order": "ascending"
+            },
+            {
+              "path": "/status",
+              "order": "ascending"
+            },
+            {
+              "path": "/created_at",
+              "order": "descending"
+            }
+          ],
+          [
+            {
+              "path": "/event_type",
+              "order": "ascending"
+            },
+            {
+              "path": "/created_at",
+              "order": "descending"
+            }
+          ]
+        ]
+      },
+      "throughput": {
+        "mode": "autoscale",
+        "maxThroughput": 20000
+      },
+      "description": "Queue for outgoing webhook events with retry logic tracking",
+      "schema": {
+        "webhook_id": "string (UUID)",
+        "merchant_id": "string (partition key)",
+        "event_type": "string (e.g., charge.succeeded, refund.created)",
+        "event_id": "string (related event UUID)",
+        "created_at": "datetime (ISO 8601)",
+        "status": "string (pending, sent, failed, cancelled)",
+        "webhook_url": "string",
+        "payload": "object (excluded from indexing)",
+        "retry_count": "integer",
+        "last_retry_at": "datetime (ISO 8601, optional)",
+        "next_retry_at": "datetime (ISO 8601, optional)",
+        "response_status_code": "integer (optional)",
+        "response_time_ms": "integer (optional)",
+        "error_message": "string (optional)",
+        "delivered_at": "datetime (ISO 8601, optional)",
+        "ttl": "integer (60 days = 5184000 seconds)"
+      }
+    }
+  ],
+  "metadata": {
+    "database_name": "stripe_nosql_db",
+    "consistency_level": "Session",
+    "multi_region": {
+      "primary": "West Europe",
+      "secondary": ["East US"]
+    },
+    "backup": {
+      "mode": "Continuous",
+      "retention_hours": 168
+    },
+    "total_estimated_storage_tb": 5.0,
+    "total_max_throughput_ru": 110000
+  }
+}
