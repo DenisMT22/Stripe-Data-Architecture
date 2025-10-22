@@ -1,0 +1,386 @@
+{
+  "name": "etl_oltp_to_olap",
+  "properties": {
+    "description": "Daily ETL pipeline: Extract from OLTP (CDC), Transform, Load to OLAP",
+    "activities": [
+      {
+        "name": "Get_CDC_Watermark",
+        "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.00:05:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderQuery": "SELECT TableName, LastProcessedLSN, LastProcessedTime FROM dbo.ETL_CDC_Watermark WHERE TableName = 'Payment'",
+            "queryTimeout": "00:05:00"
+          },
+          "dataset": {
+            "referenceName": "DS_AzureSQL_OLTP",
+            "type": "DatasetReference"
+          },
+          "firstRowOnly": true
+        }
+      },
+      {
+        "name": "Extract_CDC_Payment_Changes",
+        "type": "Copy",
+        "dependsOn": [
+          {
+            "activity": "Get_CDC_Watermark",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 60
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderQuery": {
+              "value": "@concat(\n  'SELECT * FROM cdc.fn_cdc_get_net_changes_dbo_Payment(',\n  '''', activity('Get_CDC_Watermark').output.firstRow.LastProcessedLSN, '''',\n  ', sys.fn_cdc_get_max_lsn(), ''all'')'\n)",
+              "type": "Expression"
+            },
+            "queryTimeout": "00:30:00",
+            "isolationLevel": "ReadCommitted"
+          },
+          "sink": {
+            "type": "ParquetSink",
+            "storeSettings": {
+              "type": "AzureBlobFSWriteSettings",
+              "copyBehavior": "PreserveHierarchy"
+            },
+            "formatSettings": {
+              "type": "ParquetWriteSettings",
+              "compressionCodec": "snappy"
+            }
+          },
+          "enableStaging": false,
+          "dataIntegrationUnits": 4,
+          "parallelCopies": 2
+        },
+        "inputs": [
+          {
+            "referenceName": "DS_AzureSQL_OLTP",
+            "type": "DatasetReference"
+          }
+        ],
+        "outputs": [
+          {
+            "referenceName": "DS_ADLS_Staging_Parquet",
+            "type": "DatasetReference",
+            "parameters": {
+              "folderPath": {
+                "value": "@concat('staging/', formatDateTime(utcnow(), 'yyyy-MM-dd'), '/payment_changes')",
+                "type": "Expression"
+              },
+              "fileName": {
+                "value": "@concat('payment_', formatDateTime(utcnow(), 'yyyyMMddHHmmss'), '.parquet')",
+                "type": "Expression"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Transform_Payment_Data",
+        "type": "DatabricksNotebook",
+        "dependsOn": [
+          {
+            "activity": "Extract_CDC_Payment_Changes",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.02:00:00",
+          "retry": 1
+        },
+        "typeProperties": {
+          "notebookPath": "/Shared/ETL/transform_payment_data",
+          "baseParameters": {
+            "input_path": {
+              "value": "@concat('staging/', formatDateTime(utcnow(), 'yyyy-MM-dd'), '/payment_changes')",
+              "type": "Expression"
+            },
+            "output_path": {
+              "value": "@concat('processed/', formatDateTime(utcnow(), 'yyyy-MM-dd'), '/payment_transformed')",
+              "type": "Expression"
+            },
+            "run_date": {
+              "value": "@formatDateTime(utcnow(), 'yyyy-MM-dd')",
+              "type": "Expression"
+            }
+          }
+        },
+        "linkedServiceName": {
+          "referenceName": "LS_AzureDatabricks",
+          "type": "LinkedServiceReference"
+        }
+      },
+      {
+        "name": "Load_Fact_Payment",
+        "type": "Copy",
+        "dependsOn": [
+          {
+            "activity": "Transform_Payment_Data",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 60
+        },
+        "typeProperties": {
+          "source": {
+            "type": "ParquetSource",
+            "storeSettings": {
+              "type": "AzureBlobFSReadSettings",
+              "recursive": true,
+              "wildcardFileName": "*.parquet"
+            }
+          },
+          "sink": {
+            "type": "SqlDWSink",
+            "preCopyScript": "TRUNCATE TABLE stg.Fact_Payment_Temp",
+            "writeBehavior": "Insert",
+            "sqlWriterUseTableLock": true,
+            "tableOption": "autoCreate",
+            "disableMetricsCollection": false
+          },
+          "enableStaging": true,
+          "stagingSettings": {
+            "linkedServiceName": {
+              "referenceName": "LS_AzureBlobStorage",
+              "type": "LinkedServiceReference"
+            },
+            "path": "staging/polybase"
+          },
+          "dataIntegrationUnits": 8,
+          "parallelCopies": 4
+        },
+        "inputs": [
+          {
+            "referenceName": "DS_ADLS_Processed_Parquet",
+            "type": "DatasetReference",
+            "parameters": {
+              "folderPath": {
+                "value": "@concat('processed/', formatDateTime(utcnow(), 'yyyy-MM-dd'), '/payment_transformed')",
+                "type": "Expression"
+              }
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "referenceName": "DS_Synapse_Fact_Payment_Staging",
+            "type": "DatasetReference"
+          }
+        ]
+      },
+      {
+        "name": "Merge_Fact_Payment",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "Load_Fact_Payment",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 2
+        },
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[sp_Merge_Fact_Payment]",
+          "storedProcedureParameters": {
+            "RunDate": {
+              "value": {
+                "value": "@formatDateTime(utcnow(), 'yyyy-MM-dd')",
+                "type": "Expression"
+              },
+              "type": "DateTime"
+            }
+          }
+        },
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSynapse",
+          "type": "LinkedServiceReference"
+        }
+      },
+      {
+        "name": "Update_Statistics",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "Merge_Fact_Payment",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.00:30:00",
+          "retry": 1
+        },
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[sp_Update_Statistics]",
+          "storedProcedureParameters": {
+            "TableName": {
+              "value": "Fact_Payment",
+              "type": "String"
+            }
+          }
+        },
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSynapse",
+          "type": "LinkedServiceReference"
+        }
+      },
+      {
+        "name": "Data_Quality_Checks",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "Update_Statistics",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.00:15:00",
+          "retry": 0
+        },
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[sp_Data_Quality_Checks]",
+          "storedProcedureParameters": {
+            "RunDate": {
+              "value": {
+                "value": "@formatDateTime(utcnow(), 'yyyy-MM-dd')",
+                "type": "Expression"
+              },
+              "type": "DateTime"
+            },
+            "TableName": {
+              "value": "Fact_Payment",
+              "type": "String"
+            }
+          }
+        },
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSynapse",
+          "type": "LinkedServiceReference"
+        }
+      },
+      {
+        "name": "Update_CDC_Watermark",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "Data_Quality_Checks",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.00:05:00",
+          "retry": 2
+        },
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[sp_Update_ETL_Watermark]",
+          "storedProcedureParameters": {
+            "TableName": {
+              "value": "Payment",
+              "type": "String"
+            },
+            "NewLSN": {
+              "value": {
+                "value": "@activity('Extract_CDC_Payment_Changes').output.effectiveIntegrationRuntime",
+                "type": "Expression"
+              },
+              "type": "Binary"
+            },
+            "RowsProcessed": {
+              "value": {
+                "value": "@activity('Load_Fact_Payment').output.rowsCopied",
+                "type": "Expression"
+              },
+              "type": "Int64"
+            }
+          }
+        },
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSQL_OLTP",
+          "type": "LinkedServiceReference"
+        }
+      },
+      {
+        "name": "Send_Success_Notification",
+        "type": "WebActivity",
+        "dependsOn": [
+          {
+            "activity": "Update_CDC_Watermark",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.00:02:00",
+          "retry": 1
+        },
+        "typeProperties": {
+          "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "value": "@concat('{\"text\": \"✅ ETL Pipeline Succeeded\\n',\n  '- Date: ', formatDateTime(utcnow(), 'yyyy-MM-dd HH:mm:ss'), '\\n',\n  '- Rows Processed: ', string(activity('Load_Fact_Payment').output.rowsCopied), '\\n',\n  '- Duration: ', string(activity('Load_Fact_Payment').output.copyDuration), ' seconds\"}'\n)",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "Send_Failure_Notification",
+        "type": "WebActivity",
+        "dependsOn": [
+          {
+            "activity": "Data_Quality_Checks",
+            "dependencyConditions": ["Failed"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.00:02:00",
+          "retry": 1
+        },
+        "typeProperties": {
+          "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "value": "@concat('{\"text\": \"❌ ETL Pipeline Failed\\n',\n  '- Date: ', formatDateTime(utcnow(), 'yyyy-MM-dd HH:mm:ss'), '\\n',\n  '- Failed Activity: ', activity('Data_Quality_Checks').error.message, '\\n',\n  '- Action: Check logs in Azure Monitor\"}'\n)",
+            "type": "Expression"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "RunDate": {
+        "type": "string",
+        "defaultValue": "@formatDateTime(utcnow(), 'yyyy-MM-dd')"
+      },
+      "ForceFullLoad": {
+        "type": "bool",
+        "defaultValue": false
+      }
+    },
+    "annotations": [
+      "ETL",
+      "CDC",
+      "Daily"
+    ],
+    "lastPublishTime": "2025-10-20T14:30:00Z"
+  }
+}
