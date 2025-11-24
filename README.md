@@ -47,7 +47,7 @@ Conception d'une architecture de données complète pour Stripe (FinTech) intég
 - **IaC** : Terraform
 - **Containers** : Docker
 - **CI/CD** : GitHub Actions
-- **Monitoring** : Azure Monitor
+- **Monitoring** : Google Cloud Operations (Cloud Monitoring)
 
 ## Structure du projet
 
