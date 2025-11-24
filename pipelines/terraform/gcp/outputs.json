@@ -1,0 +1,239 @@
+{
+  "bigquery_console_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://console.cloud.google.com/bigquery?project=stripe-data-architecture\u0026p=stripe-data-architecture\u0026d=stripe_olap\u0026page=dataset"
+  },
+  "bigquery_dataset_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe_olap"
+  },
+  "bigquery_dataset_location": {
+    "sensitive": false,
+    "type": "string",
+    "value": "EU"
+  },
+  "bigquery_query_command": {
+    "sensitive": false,
+    "type": "string",
+    "value": "bq query --use_legacy_sql=false 'SELECT * FROM `stripe-data-architecture.stripe_olap.fact_transactions` LIMIT 10'"
+  },
+  "bigquery_tables": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        "string",
+        "string",
+        "string",
+        "string",
+        "string"
+      ]
+    ],
+    "value": [
+      "fact_transactions",
+      "dim_customer",
+      "dim_merchant",
+      "dim_time",
+      "agg_daily_revenue"
+    ]
+  },
+  "deployment_timestamp": {
+    "sensitive": false,
+    "type": "string",
+    "value": "2025-11-15T00:00:49Z"
+  },
+  "estimated_costs": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "bigquery_storage": "string",
+        "cloud_sql_micro": "string",
+        "cloud_storage": "string",
+        "firestore": "string",
+        "pubsub": "string",
+        "strategy": "string",
+        "total_estimated": "string"
+      }
+    ],
+    "value": {
+      "bigquery_storage": "~0.02 USD/GB/mois (prix stockage EU)",
+      "cloud_sql_micro": "~8 USD/mois (db-f1-micro avec 10GB)",
+      "cloud_storage": "~0.02 USD/GB/mois (STANDARD EU)",
+      "firestore": "Gratuit jusqu'à 1GB + 50K lectures/jour",
+      "pubsub": "Gratuit jusqu'à 10GB/mois",
+      "strategy": "DEPLOY → CAPTURE → DESTROY (coût réel: ~0.50 USD/session)",
+      "total_estimated": "~10-15 USD/mois (usage minimal)"
+    }
+  },
+  "etl_service_account_email": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe-data-etl-sa@stripe-data-architecture.iam.gserviceaccount.com"
+  },
+  "etl_service_account_key_command": {
+    "sensitive": false,
+    "type": "string",
+    "value": "gcloud iam service-accounts keys create key.json --iam-account=stripe-data-etl-sa@stripe-data-architecture.iam.gserviceaccount.com"
+  },
+  "firestore_console_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://console.cloud.google.com/firestore/databases/-default-/data/panel?project=stripe-data-architecture"
+  },
+  "firestore_database_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "(default)"
+  },
+  "firestore_location": {
+    "sensitive": false,
+    "type": "string",
+    "value": "europe-west9"
+  },
+  "gcp_console_urls": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "bigquery": "string",
+        "billing": "string",
+        "cloud_sql": "string",
+        "cloud_storage": "string",
+        "dashboard": "string",
+        "firestore": "string",
+        "iam": "string",
+        "pubsub": "string",
+        "secret_manager": "string"
+      }
+    ],
+    "value": {
+      "bigquery": "https://console.cloud.google.com/bigquery?project=stripe-data-architecture",
+      "billing": "https://console.cloud.google.com/billing?project=stripe-data-architecture",
+      "cloud_sql": "https://console.cloud.google.com/sql/instances?project=stripe-data-architecture",
+      "cloud_storage": "https://console.cloud.google.com/storage/browser?project=stripe-data-architecture",
+      "dashboard": "https://console.cloud.google.com/home/dashboard?project=stripe-data-architecture",
+      "firestore": "https://console.cloud.google.com/firestore?project=stripe-data-architecture",
+      "iam": "https://console.cloud.google.com/iam-admin/iam?project=stripe-data-architecture",
+      "pubsub": "https://console.cloud.google.com/cloudpubsub?project=stripe-data-architecture",
+      "secret_manager": "https://console.cloud.google.com/security/secret-manager?project=stripe-data-architecture"
+    }
+  },
+  "next_steps": {
+    "sensitive": false,
+    "type": "string",
+    "value": "╔════════════════════════════════════════════════════════════════╗\n║  DÉPLOIEMENT RÉUSSI - PROCHAINES ÉTAPES                        ║\n╚════════════════════════════════════════════════════════════════╝\n    \n1️⃣  CONNEXION CLOUD SQL :\n    psql -h 34.163.67.230 -U stripe_admin -d stripe_oltp\n    \n2️⃣  REQUÊTES BIGQUERY :\n    bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `stripe-data-architecture.stripe_olap.fact_transactions`'\n    \n3️⃣  VÉRIFIER FIRESTORE :\n    https://console.cloud.google.com/firestore?project=stripe-data-architecture\n    \n4️⃣  CAPTURER SCREENS (10 captures nécessaires) :\n    - Dashboard GCP\n    - Cloud SQL instance\n    - BigQuery dataset + tables\n    - Firestore collections\n    - Cloud Storage bucket\n    - Pub/Sub topic\n    - IAM permissions\n    - Billing report\n    - Terraform outputs\n    - Architecture complète\n    \n5️⃣  DÉTRUIRE RESSOURCES (après captures) :\n    cd pipelines/terraform/gcp\n    ./destroy.sh\n    \n6️⃣  VÉRIFIER NETTOYAGE :\n    ./verify_cleanup.sh\n    \n⚠️  IMPORTANT : Détruire les ressources dans les 3h pour économiser !\n"
+  },
+  "project_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe-data-architecture"
+  },
+  "pubsub_console_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://console.cloud.google.com/cloudpubsub/topic/list?project=stripe-data-architecture"
+  },
+  "pubsub_publish_command": {
+    "sensitive": false,
+    "type": "string",
+    "value": "gcloud pubsub topics publish stripe-data-transactions --message '{\"transaction_id\":\"test_001\",\"amount\":99.99}'"
+  },
+  "pubsub_subscription_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe-data-transactions-pull"
+  },
+  "pubsub_topic_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe-data-transactions"
+  },
+  "region": {
+    "sensitive": false,
+    "type": "string",
+    "value": "europe-west9"
+  },
+  "secret_access_command": {
+    "sensitive": true,
+    "type": "string",
+    "value": "gcloud secrets versions access latest --secret=stripe-data-sql-admin-password"
+  },
+  "secret_sql_password_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe-data-sql-admin-password"
+  },
+  "sql_connection_command": {
+    "sensitive": false,
+    "type": "string",
+    "value": "psql -h 34.163.67.230 -U stripe_admin -d stripe_oltp"
+  },
+  "sql_connection_string": {
+    "sensitive": false,
+    "type": "string",
+    "value": "postgresql://stripe_admin@34.163.67.230:5432/stripe_oltp"
+  },
+  "sql_database_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe_oltp"
+  },
+  "sql_instance_connection_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe-data-architecture:europe-west9:stripe-data-oltp-dev"
+  },
+  "sql_instance_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe-data-oltp-dev"
+  },
+  "sql_public_ip": {
+    "sensitive": false,
+    "type": "string",
+    "value": "34.163.67.230"
+  },
+  "storage_bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "stripe-data-architecture-stripe-data-datalake"
+  },
+  "storage_bucket_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "gs://stripe-data-architecture-stripe-data-datalake"
+  },
+  "storage_console_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://console.cloud.google.com/storage/browser/stripe-data-architecture-stripe-data-datalake?project=stripe-data-architecture"
+  },
+  "storage_gsutil_command": {
+    "sensitive": false,
+    "type": "string",
+    "value": "gsutil ls -r gs://stripe-data-architecture-stripe-data-datalake/"
+  },
+  "useful_commands": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "bq_list_tables": "string",
+        "check_apis": "string",
+        "list_resources": "string",
+        "sql_connect": "string",
+        "storage_list": "string"
+      }
+    ],
+    "value": {
+      "bq_list_tables": "bq ls stripe-data-architecture:stripe_olap",
+      "check_apis": "gcloud services list --enabled --project=stripe-data-architecture",
+      "list_resources": "gcloud projects describe stripe-data-architecture",
+      "sql_connect": "gcloud sql connect stripe-data-oltp-dev --user=stripe_admin",
+      "storage_list": "gsutil ls gs://stripe-data-architecture-stripe-data-datalake"
+    }
+  }
+}

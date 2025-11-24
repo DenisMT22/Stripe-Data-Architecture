@@ -1,5 +1,8 @@
 # Architecture de Données Stripe
 
+La Présentation + la Vidéo de déploiement sont consultables via ce lien https://drive.google.com/drive/folders/1DmyGvGb58mn18-oMCWjkortsZ5wElDGC?usp=sharing
+
+
 ## Contexte
 
 Conception d'une architecture de données complète pour Stripe (FinTech) intégrant :
@@ -20,12 +23,24 @@ Conception d'une architecture de données complète pour Stripe (FinTech) intég
 
 ### Composants principaux
 
+#### Azure
+
 - **OLTP** : Azure SQL Database (HA)
 - **OLAP** : Azure Synapse Analytics
 - **NoSQL** : Azure Cosmos DB
 - **Streaming** : Azure Event Hubs
 - **Orchestration** : Azure Data Factory + Apache Airflow
 - **ML** : Azure Machine Learning
+
+#### GCP
+
+- **OLTP** : Cloud SQL (PostgreSQL)
+- **OLAP** : BigQuery (Star Schema)
+- **NoSQL** : Firestore (JSON Docs)
+- **Streaming** : Pub/Sub
+- **Data Lake** : Cloud Storage
+ 
+
 
 ### Technologies utilisées
 
@@ -46,5 +61,5 @@ stripe-data-architecture/
 
 ## Déploiement
 
-Instructions de déploiement dans `pipelines/terraform/README.md`
+Instructions de déploiement dans `pipelines/terraform/gcp/README.md`
 
